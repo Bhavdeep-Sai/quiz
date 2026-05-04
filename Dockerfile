@@ -20,5 +20,5 @@ COPY --from=vendor /app /var/www/html
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
 
 ENV PHP_FPM_CHILDREN=5
-EXPOSE 9000
+EXPOSE 10000
 CMD ["php-fpm"]
