@@ -7,6 +7,9 @@ composer install --no-dev --prefer-dist --no-interaction
 echo "=== Running Database Migrations ==="
 php artisan migrate --force
 
+echo "=== Seeding Demo Data ==="
+php artisan db:seed --force
+
 echo "=== Caching Configuration ==="
 php artisan config:cache
 php artisan route:cache
