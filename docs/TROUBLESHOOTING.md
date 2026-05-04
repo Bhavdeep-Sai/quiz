@@ -41,9 +41,7 @@ Fixes:
 
 - Wait until PostgreSQL healthcheck is healthy.
 - Confirm `.env` values:
-  - `DB_HOST=postgres`
-  - `DB_PORT=5432`
-  - DB credentials match compose env.
+  - `DATABASE_URL=postgresql://user:password@host:5432/quiz?sslmode=require`
 - Test connection manually:
 
 ```bash

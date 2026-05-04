@@ -25,11 +25,7 @@ Required values in `.env`:
 - `APP_DEBUG`
 - `APP_URL`
 - `DB_CONNECTION=pgsql`
-- `DB_HOST=postgres`
-- `DB_PORT=5432`
-- `DB_DATABASE`
-- `DB_USERNAME`
-- `DB_PASSWORD`
+- `DATABASE_URL`
 
 Recommended production values:
 

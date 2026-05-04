@@ -48,17 +48,12 @@ git push -u origin main
 
 ### Step 4: Note Database Credentials
 
-After creation, copy the **Internal Database URL** format:
+After creation, copy the database connection string shown in Render and use it directly:
 ```
-postgresql://quiz_user:PASSWORD@quiz-db.cqrx3a.ng.render.com:5432/quiz
+postgresql://quiz_user:PASSWORD@dpg-d7s28r3eo5us73dial1g-a.postgres.render.com:5432/quiz?sslmode=require
 ```
 
-Or you can use these components separately:
-- **Host**: `quiz-db.cqrx3a.ng.render.com`
-- **Port**: `5432`
-- **Database**: `quiz`
-- **User**: `quiz_user`
-- **Password**: (shown on Render dashboard)
+Use that value as `DATABASE_URL` in the Render web service environment.
 
 ⚠️ **Save these credentials** - you'll need them in the next steps.
 
@@ -114,11 +109,7 @@ APP_KEY=base64:YOUR_APP_KEY_HERE
 APP_URL=https://quiz-app.onrender.com
 
 DB_CONNECTION=pgsql
-DB_HOST=quiz-db.cqrx3a.ng.render.com
-DB_PORT=5432
-DB_DATABASE=quiz
-DB_USERNAME=quiz_user
-DB_PASSWORD=your_database_password_here
+DATABASE_URL=postgresql://quiz_user:your_database_password_here@dpg-d7s28r3eo5us73dial1g-a.postgres.render.com:5432/quiz_qe1f?sslmode=require
 ```
 
 #### Optional (Recommended)

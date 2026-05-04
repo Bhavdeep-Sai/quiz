@@ -22,11 +22,7 @@ This project has been successfully migrated from MySQL 8.0 to PostgreSQL 16. Thi
 Updated `.env`, `.env.example`, and `.env.prod`:
 ```
 DB_CONNECTION=pgsql
-DB_HOST=postgres          # (or your-db-host.render.com for Render)
-DB_PORT=5432
-DB_DATABASE=quiz
-DB_USERNAME=quiz_user
-DB_PASSWORD=your_password
+DATABASE_URL=postgresql://quiz_user:your_password@your-db-host.render.com:5432/quiz?sslmode=require
 ```
 
 ### 4. PHP Extensions
@@ -167,11 +163,7 @@ When deploying to Render:
 3. Add to environment variables:
    ```
    DB_CONNECTION=pgsql
-   DB_HOST=your-database-url.render.com
-   DB_PORT=5432
-   DB_DATABASE=quiz
-   DB_USERNAME=your_username
-   DB_PASSWORD=your_password
+   DATABASE_URL=postgresql://your_username:your_password@your-database-url.render.com:5432/quiz?sslmode=require
    ```
 4. Deploy your web service
 5. Migrations run automatically during build
