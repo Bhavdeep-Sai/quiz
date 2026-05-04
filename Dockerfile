@@ -18,8 +18,11 @@ RUN apt-get update \
 # Copy application from vendor stage
 WORKDIR /var/www/html
 COPY --from=vendor /app /var/www/html
+COPY docker/start.sh /usr/local/bin/start.sh
+
+RUN chmod +x /usr/local/bin/start.sh
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
 
 EXPOSE 10000
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT}"]
+CMD ["/usr/local/bin/start.sh"]
