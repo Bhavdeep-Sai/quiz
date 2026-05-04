@@ -76,7 +76,7 @@
         .nav-shell {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end;
             gap: 1rem;
             flex: 1;
         }
@@ -95,7 +95,7 @@
 
         .nav a:hover, .nav a.active { background: rgba(45, 212, 191, 0.10); color: #fff; }
 
-        .user-menu-container { position: relative; }
+        .user-menu-container { position: relative; margin-left: .35rem; margin-right: .15rem; }
         .user-btn {
             display: inline-flex; align-items: center; gap: .55rem;
             padding: .68rem .95rem; border-radius: 999px;

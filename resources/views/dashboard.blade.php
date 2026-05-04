@@ -102,7 +102,7 @@
             </h2>
         </div>
 
-        <div class="grid grid-1">
+        <div class="grid grid-3">
             <a href="/quizzes" class="quiz-item" style="text-align: center;">
                 <i class="fas fa-book" style="font-size: 1.55rem; color: var(--brand-2); margin-bottom: .75rem; display: block;"></i>
                 <div class="quiz-item-title" style="justify-content: center;">Browse Quizzes</div>
