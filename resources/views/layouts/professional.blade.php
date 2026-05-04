@@ -51,6 +51,14 @@
         .nav { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; justify-content: flex-end; list-style: none; padding: 0; margin: 0; }
         .nav a { display: inline-flex; align-items: center; gap: .5rem; padding: .65rem .95rem; border-radius: 999px; color: #cbd5e1; text-decoration: none; font-weight: 600; font-size: .94rem; }
         .nav a:hover, .nav a.active { background: rgba(45, 212, 191, 0.10); color: #fff; }
+        .user-menu-container { position: relative; }
+        .user-btn { display: inline-flex; align-items: center; gap: .5rem; padding: .65rem .95rem; border-radius: 999px; color: #cbd5e1; background: rgba(45, 212, 191, 0.08); border: 1px solid rgba(45, 212, 191, 0.2); font-weight: 600; font-size: .94rem; cursor: pointer; transition: all .18s ease; }
+        .user-btn:hover { background: rgba(45, 212, 191, 0.15); color: #fff; }
+        .dropdown-menu { display: none; position: absolute; top: calc(100% + .5rem); right: 0; background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); min-width: 220px; z-index: 1000; }
+        .dropdown-menu.active { display: block; }
+        .dropdown-menu a, .dropdown-menu button { display: flex; align-items: center; gap: .75rem; width: 100%; padding: .85rem 1rem; border: none; background: none; color: #cbd5e1; text-decoration: none; font-size: .95rem; font-weight: 500; cursor: pointer; transition: .18s ease; text-align: left; }
+        .dropdown-menu a:hover, .dropdown-menu button:hover { background: rgba(45, 212, 191, 0.1); color: #fff; }
+        .dropdown-menu a:first-child, .dropdown-menu button:first-child { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
         main { width: min(1160px, calc(100% - 2rem)); margin: 1.25rem auto 2rem; }
         .card, .surface { background: var(--surface); border: 1px solid rgba(226, 232, 240, 0.9); border-radius: var(--radius); box-shadow: var(--shadow-sm); backdrop-filter: blur(10px); }
         .card { padding: 1.25rem; }
@@ -58,6 +66,7 @@
         .card-title { display: inline-flex; align-items: center; gap: .7rem; margin: 0; font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; }
         .card-title i { color: var(--brand); }
         .grid { display: grid; gap: 1rem; }
+        .grid-1 { grid-template-columns: 1fr; }
         .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
         .grid-3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
         .grid-4 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
@@ -94,7 +103,8 @@
         .stat-icon { color: var(--brand-2); margin-right: .4rem; }
         .quiz-item { display: block; text-decoration: none; color: inherit; padding: 1rem; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
         .quiz-item-title { font-size: 1rem; font-weight: 800; margin-bottom: .4rem; display: flex; align-items: center; gap: .55rem; }
-        .quiz-item-meta { display: flex; flex-wrap: wrap; gap: .85rem; color: var(--muted); font-size: .85rem; margin-top: .9rem; }
+        .quiz-item-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; color: var(--muted); font-size: .85rem; margin-top: .9rem; align-items: center; }
+        .quiz-item-meta span { display: inline-flex; align-items: center; gap: .6rem; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: .8rem .75rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
         thead th { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
@@ -109,8 +119,9 @@
             .topbar { min-height: 64px; flex-direction: column; align-items: flex-start; padding: .75rem 0; }
             .nav { justify-content: flex-start; }
             .card { padding: 1rem; border-radius: 18px; }
-            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .grid-1, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
             .card-header { flex-direction: column; align-items: flex-start; }
+            .dropdown-menu { right: 0; }
         }
     </style>
 </head>
@@ -123,6 +134,25 @@
                     <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}"><i class="fas fa-house"></i>Home</a></li>
                     <li><a href="/quizzes" class="{{ request()->is('quizzes*') ? 'active' : '' }}"><i class="fas fa-book"></i>Quizzes</a></li>
                     <li><a href="/admin/quizzes" class="{{ request()->is('admin/quizzes*') ? 'active' : '' }}"><i class="fas fa-screwdriver-wrench"></i>Manage</a></li>
+                    <li class="user-menu-container">
+                        <button class="user-btn" onclick="toggleUserMenu()">
+                            <i class="fas fa-user-circle"></i>
+                            <span>{{ auth()->user()->name ?? 'Admin' }}</span>
+                            <i class="fas fa-chevron-down" style="font-size: 0.75rem;"></i>
+                        </button>
+                        <div class="dropdown-menu" id="userDropdown">
+                            <div style="padding: 0.75rem 1rem; font-size: 0.85rem; color: #94a3b8;">
+                                Logged in as <strong>{{ auth()->user()->email ?? 'admin@quizmaster.local' }}</strong>
+                            </div>
+                            <form action="/logout" method="POST" style="margin: 0;">
+                                @csrf
+                                <button type="submit" style="border-top: 1px solid rgba(255, 255, 255, 0.08);">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -157,5 +187,21 @@
     <footer>
         <div class="shell">© 2026 QuizMaster</div>
     </footer>
+
+    <script>
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userContainer = document.querySelector('.user-menu-container');
+            const dropdown = document.getElementById('userDropdown');
+            if (userContainer && !userContainer.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
