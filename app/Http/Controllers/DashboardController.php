@@ -13,23 +13,30 @@ class DashboardController extends Controller
      */
     public function index(): View
     {
-        $quizzes = Quiz::where('is_published', true)
-            ->withCount(['questions', 'attempts'])
-            ->latest()
-            ->take(6)
-            ->get();
+        try {
+            $quizzes = Quiz::where('is_published', true)
+                ->withCount(['questions', 'attempts'])
+                ->latest()
+                ->take(6)
+                ->get();
 
-        $totalAttempts = Attempt::count();
-        $totalQuizzes = Quiz::count();
-        $totalQuestions = $quizzes->sum('questions_count');
-        $successfulAttempts = Attempt::where('is_passed', true)->count();
+            $totalAttempts = Attempt::count();
+            $totalQuizzes = Quiz::count();
+            $totalQuestions = $quizzes->sum('questions_count');
 
-        $attemptScore = Attempt::sum('total_score');
-        $attemptMarks = Attempt::sum('total_marks');
+            $attemptScore = Attempt::sum('total_score');
+            $attemptMarks = Attempt::sum('total_marks');
 
-        $avgScore = $totalAttempts > 0 && $attemptMarks > 0
-            ? round(($attemptScore / $attemptMarks) * 100, 1)
-            : 0;
+            $avgScore = $totalAttempts > 0 && $attemptMarks > 0
+                ? round(($attemptScore / $attemptMarks) * 100, 1)
+                : 0;
+        } catch (\Throwable $exception) {
+            $quizzes = collect();
+            $totalQuizzes = 0;
+            $totalQuestions = 0;
+            $totalAttempts = 0;
+            $avgScore = 0;
+        }
 
         return view('dashboard', [
             'quizzes' => $quizzes,
