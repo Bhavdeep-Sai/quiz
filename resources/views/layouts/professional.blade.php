@@ -13,6 +13,7 @@
         :root {
             --bg: #f5f7fb;
             --surface: rgba(255, 255, 255, 0.94);
+            --surface-strong: #ffffff;
             --text: #0f172a;
             --muted: #64748b;
             --line: #e2e8f0;
@@ -24,8 +25,18 @@
             --info: #2563eb;
             --shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
             --shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 14px 36px rgba(15, 23, 42, 0.10);
             --radius: 22px;
             --radius-sm: 14px;
+            --accent-primary: var(--brand-2);
+            --accent-secondary: var(--brand);
+            --text-primary: var(--text);
+            --text-secondary: var(--muted);
+            --bg-primary: var(--surface-strong);
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #e2e8f0;
+            --border-color: var(--line);
+            --transition: 0.18s ease;
         }
         * { box-sizing: border-box; }
         html, body { margin: 0; min-height: 100%; }
@@ -37,31 +48,39 @@
                 radial-gradient(circle at top right, rgba(15, 118, 110, 0.08), transparent 22%),
                 var(--bg);
             line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
         }
         a { color: inherit; }
         header {
             position: sticky; top: 0; z-index: 1000;
-            background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(14px);
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(14px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         .shell { width: min(1160px, calc(100% - 2rem)); margin: 0 auto; }
         .topbar { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-        .brand { display: inline-flex; align-items: center; gap: .75rem; font-weight: 800; font-size: 1.15rem; text-decoration: none; color: #fff; }
+        .brand { display: inline-flex; align-items: center; gap: .75rem; font-weight: 800; font-size: 1.15rem; text-decoration: none; color: #fff; letter-spacing: -0.02em; }
         .brand i { color: #2dd4bf; font-size: 1.25rem; }
+        .nav-shell { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex: 1; }
         .nav { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; justify-content: flex-end; list-style: none; padding: 0; margin: 0; }
-        .nav a { display: inline-flex; align-items: center; gap: .5rem; padding: .65rem .95rem; border-radius: 999px; color: #cbd5e1; text-decoration: none; font-weight: 600; font-size: .94rem; }
+        .nav a { display: inline-flex; align-items: center; gap: .5rem; padding: .65rem .95rem; border-radius: 999px; color: #cbd5e1; text-decoration: none; font-weight: 600; font-size: .94rem; transition: .2s ease; }
         .nav a:hover, .nav a.active { background: rgba(45, 212, 191, 0.10); color: #fff; }
         .user-menu-container { position: relative; }
-        .user-btn { display: inline-flex; align-items: center; gap: .5rem; padding: .65rem .95rem; border-radius: 999px; color: #cbd5e1; background: rgba(45, 212, 191, 0.08); border: 1px solid rgba(45, 212, 191, 0.2); font-weight: 600; font-size: .94rem; cursor: pointer; transition: all .18s ease; }
-        .user-btn:hover { background: rgba(45, 212, 191, 0.15); color: #fff; }
-        .dropdown-menu { display: none; position: absolute; top: calc(100% + .5rem); right: 0; background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); min-width: 220px; z-index: 1000; }
+        .user-btn { display: inline-flex; align-items: center; gap: .55rem; padding: .68rem .95rem; border-radius: 999px; color: #fff; background: rgba(45, 212, 191, 0.12); border: 1px solid rgba(45, 212, 191, 0.22); font: inherit; font-weight: 700; font-size: .92rem; cursor: pointer; transition: .2s ease; }
+        .user-btn:hover { background: rgba(45, 212, 191, 0.18); }
+        .user-btn .user-label { display: inline-flex; flex-direction: column; line-height: 1.05; }
+        .user-btn .user-label small { font-size: .72rem; font-weight: 600; color: #cbd5e1; }
+        .dropdown-menu { display: none; position: absolute; top: calc(100% + .55rem); right: 0; min-width: 220px; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35); overflow: hidden; z-index: 1001; }
         .dropdown-menu.active { display: block; }
-        .dropdown-menu a, .dropdown-menu button { display: flex; align-items: center; gap: .75rem; width: 100%; padding: .85rem 1rem; border: none; background: none; color: #cbd5e1; text-decoration: none; font-size: .95rem; font-weight: 500; cursor: pointer; transition: .18s ease; text-align: left; }
-        .dropdown-menu a:hover, .dropdown-menu button:hover { background: rgba(45, 212, 191, 0.1); color: #fff; }
-        .dropdown-menu a:first-child, .dropdown-menu button:first-child { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .dropdown-menu .menu-note { padding: .9rem 1rem .75rem; color: #94a3b8; font-size: .85rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .dropdown-menu form { margin: 0; }
+        .dropdown-menu button { display: flex; align-items: center; gap: .75rem; width: 100%; padding: .9rem 1rem; border: 0; background: transparent; color: #e2e8f0; font: inherit; font-weight: 600; cursor: pointer; text-align: left; }
+        .dropdown-menu button:hover { background: rgba(45, 212, 191, 0.10); color: #fff; }
         main { width: min(1160px, calc(100% - 2rem)); margin: 1.25rem auto 2rem; }
         .card, .surface { background: var(--surface); border: 1px solid rgba(226, 232, 240, 0.9); border-radius: var(--radius); box-shadow: var(--shadow-sm); backdrop-filter: blur(10px); }
         .card { padding: 1.25rem; }
+        .card + .card { margin-top: 1rem; }
         .card-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; padding-bottom: .9rem; border-bottom: 1px solid var(--line); }
         .card-title { display: inline-flex; align-items: center; gap: .7rem; margin: 0; font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; }
         .card-title i { color: var(--brand); }
@@ -101,10 +120,11 @@
         .stat-label { font-size: .78rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
         .stat-value { margin-top: .35rem; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; }
         .stat-icon { color: var(--brand-2); margin-right: .4rem; }
-        .quiz-item { display: block; text-decoration: none; color: inherit; padding: 1rem; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+        .quiz-item { display: block; text-decoration: none; color: inherit; padding: 1rem; border-radius: 18px; background: var(--surface-strong); border: 1px solid var(--line); box-shadow: var(--shadow-sm); transition: .18s ease; }
+        .quiz-item:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(8,145,178,.25); }
         .quiz-item-title { font-size: 1rem; font-weight: 800; margin-bottom: .4rem; display: flex; align-items: center; gap: .55rem; }
-        .quiz-item-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; color: var(--muted); font-size: .85rem; margin-top: .9rem; align-items: center; }
-        .quiz-item-meta span { display: inline-flex; align-items: center; gap: .6rem; }
+        .quiz-item-meta { display: flex; flex-wrap: wrap; gap: .85rem; color: var(--muted); font-size: .85rem; margin-top: .9rem; }
+        .quiz-item-meta span { display: inline-flex; align-items: center; gap: .45rem; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: .8rem .75rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
         thead th { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
@@ -118,10 +138,11 @@
             .shell, main { width: min(100% - 1rem, 1160px); }
             .topbar { min-height: 64px; flex-direction: column; align-items: flex-start; padding: .75rem 0; }
             .nav { justify-content: flex-start; }
+            .nav-shell { width: 100%; flex-direction: column; align-items: flex-start; }
             .card { padding: 1rem; border-radius: 18px; }
-            .grid-1, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
             .card-header { flex-direction: column; align-items: flex-start; }
-            .dropdown-menu { right: 0; }
+            .dropdown-menu { right: auto; left: 0; }
         }
     </style>
 </head>
@@ -129,32 +150,39 @@
     <header>
         <div class="shell topbar">
             <a href="/" class="brand"><i class="fas fa-graduation-cap"></i><span>QuizMaster</span></a>
-            <nav aria-label="Primary">
-                <ul class="nav">
-                    <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}"><i class="fas fa-house"></i>Home</a></li>
-                    <li><a href="/quizzes" class="{{ request()->is('quizzes*') ? 'active' : '' }}"><i class="fas fa-book"></i>Quizzes</a></li>
-                    <li><a href="/admin/quizzes" class="{{ request()->is('admin/quizzes*') ? 'active' : '' }}"><i class="fas fa-screwdriver-wrench"></i>Manage</a></li>
-                    <li class="user-menu-container">
-                        <button class="user-btn" onclick="toggleUserMenu()">
+            <div class="nav-shell">
+                <nav aria-label="Primary">
+                    <ul class="nav">
+                        <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}"><i class="fas fa-house"></i>Home</a></li>
+                        <li><a href="/quizzes" class="{{ request()->is('quizzes*') ? 'active' : '' }}"><i class="fas fa-book"></i>Quizzes</a></li>
+                        <li><a href="/admin/quizzes" class="{{ request()->is('admin/quizzes*') ? 'active' : '' }}"><i class="fas fa-screwdriver-wrench"></i>Manage</a></li>
+                    </ul>
+                </nav>
+
+                @auth
+                    <div class="user-menu-container">
+                        <button type="button" class="user-btn" onclick="toggleUserMenu()" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-user-circle"></i>
-                            <span>{{ auth()->user()->name ?? 'Admin' }}</span>
-                            <i class="fas fa-chevron-down" style="font-size: 0.75rem;"></i>
+                            <span class="user-label">
+                                <small>Logged in as</small>
+                                <span>Admin</span>
+                            </span>
+                            <i class="fas fa-chevron-down" style="font-size: .75rem;"></i>
                         </button>
+
                         <div class="dropdown-menu" id="userDropdown">
-                            <div style="padding: 0.75rem 1rem; font-size: 0.85rem; color: #94a3b8;">
-                                Logged in as <strong>{{ auth()->user()->email ?? 'admin@quizmaster.local' }}</strong>
-                            </div>
-                            <form action="/logout" method="POST" style="margin: 0;">
+                            <div class="menu-note">{{ auth()->user()->email ?? auth()->user()->name ?? 'admin' }}</div>
+                            <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" style="border-top: 1px solid rgba(255, 255, 255, 0.08);">
-                                    <i class="fas fa-sign-out-alt"></i>
+                                <button type="submit">
+                                    <i class="fas fa-right-from-bracket"></i>
                                     Logout
                                 </button>
                             </form>
                         </div>
-                    </li>
-                </ul>
-            </nav>
+                    </div>
+                @endauth
+            </div>
         </div>
     </header>
 
@@ -191,14 +219,17 @@
     <script>
         function toggleUserMenu() {
             const dropdown = document.getElementById('userDropdown');
+            if (!dropdown) {
+                return;
+            }
+
             dropdown.classList.toggle('active');
         }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const userContainer = document.querySelector('.user-menu-container');
+        document.addEventListener('click', function (event) {
+            const container = document.querySelector('.user-menu-container');
             const dropdown = document.getElementById('userDropdown');
-            if (userContainer && !userContainer.contains(event.target)) {
+            if (container && dropdown && !container.contains(event.target)) {
                 dropdown.classList.remove('active');
             }
         });

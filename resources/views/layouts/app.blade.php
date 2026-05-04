@@ -73,6 +73,14 @@
 
         .brand i { color: #2dd4bf; font-size: 1.25rem; }
 
+        .nav-shell {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex: 1;
+        }
+
         .nav {
             display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; justify-content: flex-end;
             list-style: none; padding: 0; margin: 0;
@@ -86,6 +94,57 @@
         }
 
         .nav a:hover, .nav a.active { background: rgba(45, 212, 191, 0.10); color: #fff; }
+
+        .user-menu-container { position: relative; }
+        .user-btn {
+            display: inline-flex; align-items: center; gap: .55rem;
+            padding: .68rem .95rem; border-radius: 999px;
+            color: #fff; background: rgba(45, 212, 191, 0.12);
+            border: 1px solid rgba(45, 212, 191, 0.22);
+            font: inherit; font-weight: 700; font-size: .92rem;
+            cursor: pointer; transition: .2s ease;
+        }
+
+        .user-btn:hover { background: rgba(45, 212, 191, 0.18); }
+
+        .user-btn .user-label { display: inline-flex; flex-direction: column; line-height: 1.05; }
+
+        .user-btn .user-label small { font-size: .72rem; font-weight: 600; color: #cbd5e1; }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + .55rem);
+            right: 0;
+            min-width: 220px;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
+            overflow: hidden;
+            z-index: 1001;
+        }
+
+        .dropdown-menu.active { display: block; }
+
+        .dropdown-menu .menu-note {
+            padding: .9rem 1rem .75rem;
+            color: #94a3b8;
+            font-size: .85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .dropdown-menu form { margin: 0; }
+
+        .dropdown-menu button {
+            display: flex; align-items: center; gap: .75rem;
+            width: 100%; padding: .9rem 1rem;
+            border: 0; background: transparent;
+            color: #e2e8f0; font: inherit; font-weight: 600;
+            cursor: pointer; text-align: left;
+        }
+
+        .dropdown-menu button:hover { background: rgba(45, 212, 191, 0.10); color: #fff; }
 
         main {
             width: min(1160px, calc(100% - 2rem));
@@ -174,6 +233,7 @@
         .quiz-item:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(8,145,178,.25); }
         .quiz-item-title { font-size: 1rem; font-weight: 800; margin-bottom: .4rem; display: flex; align-items: center; gap: .55rem; }
         .quiz-item-meta { display: flex; flex-wrap: wrap; gap: .85rem; color: var(--muted); font-size: .85rem; margin-top: .9rem; }
+        .quiz-item-meta span { display: inline-flex; align-items: center; gap: .45rem; }
 
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: .8rem .75rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
@@ -197,9 +257,11 @@
             .shell, main { width: min(100% - 1rem, 1160px); }
             .topbar { min-height: 64px; flex-direction: column; align-items: flex-start; padding: .75rem 0; }
             .nav { justify-content: flex-start; }
+            .nav-shell { width: 100%; flex-direction: column; align-items: flex-start; }
             .card { padding: 1rem; border-radius: 18px; }
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
             .card-header { flex-direction: column; align-items: flex-start; }
+            .dropdown-menu { right: auto; left: 0; }
         }
     </style>
 </head>
@@ -207,13 +269,39 @@
     <header>
         <div class="shell topbar">
             <a href="/" class="brand"><i class="fas fa-graduation-cap"></i><span>QuizMaster</span></a>
-            <nav aria-label="Primary">
-                <ul class="nav">
-                    <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}"><i class="fas fa-house"></i>Home</a></li>
-                    <li><a href="/quizzes" class="{{ request()->is('quizzes*') ? 'active' : '' }}"><i class="fas fa-book"></i>Quizzes</a></li>
-                    <li><a href="/admin/quizzes" class="{{ request()->is('admin/quizzes*') ? 'active' : '' }}"><i class="fas fa-screwdriver-wrench"></i>Manage</a></li>
-                </ul>
-            </nav>
+            <div class="nav-shell">
+                <nav aria-label="Primary">
+                    <ul class="nav">
+                        <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}"><i class="fas fa-house"></i>Home</a></li>
+                        <li><a href="/quizzes" class="{{ request()->is('quizzes*') ? 'active' : '' }}"><i class="fas fa-book"></i>Quizzes</a></li>
+                        <li><a href="/admin/quizzes" class="{{ request()->is('admin/quizzes*') ? 'active' : '' }}"><i class="fas fa-screwdriver-wrench"></i>Manage</a></li>
+                    </ul>
+                </nav>
+
+                @auth
+                    <div class="user-menu-container">
+                        <button type="button" class="user-btn" onclick="toggleUserMenu()" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i>
+                            <span class="user-label">
+                                <small>Logged in as</small>
+                                <span>Admin</span>
+                            </span>
+                            <i class="fas fa-chevron-down" style="font-size: .75rem;"></i>
+                        </button>
+
+                        <div class="dropdown-menu" id="userDropdown">
+                            <div class="menu-note">{{ auth()->user()->email ?? auth()->user()->name ?? 'admin' }}</div>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit">
+                                    <i class="fas fa-right-from-bracket"></i>
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endauth
+            </div>
         </div>
     </header>
 
@@ -246,5 +334,24 @@
     <footer>
         <div class="shell">© 2026 QuizMaster</div>
     </footer>
+
+    <script>
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            if (!dropdown) {
+                return;
+            }
+
+            dropdown.classList.toggle('active');
+        }
+
+        document.addEventListener('click', function (event) {
+            const container = document.querySelector('.user-menu-container');
+            const dropdown = document.getElementById('userDropdown');
+            if (container && dropdown && !container.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
