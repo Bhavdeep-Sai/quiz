@@ -16,7 +16,7 @@ return [
     ),
     'path' => '/',
     'domain' => env('SESSION_DOMAIN'),
-    'secure' => env('SESSION_SECURE_COOKIES'),
+    'secure' => env('SESSION_SECURE_COOKIE', env('SESSION_SECURE_COOKIES')),
     'http_only' => true,
     'same_site' => 'lax',
     'partitioned' => false,

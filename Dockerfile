@@ -10,6 +10,8 @@ FROM php:8.2-fpm
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libzip-dev zlib1g-dev libpng-dev libjpeg-dev libonig-dev libxml2-dev libpq-dev unzip git zip postgresql-client \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && docker-php-ext-install pdo_pgsql pdo_mysql mbstring zip exif pcntl bcmath \
     && rm -rf /var/lib/apt/lists/*
 
