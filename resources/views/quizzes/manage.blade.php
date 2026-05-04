@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; flex-wrap:wrap;">
             <h1>Quiz Management</h1>
             <a href="{{ route('quizzes.create') }}" class="btn">+ Create New Quiz</a>
         </div>
@@ -62,7 +62,7 @@
                 </tbody>
             </table>
 
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 1rem;">
                 {{ $quizzes->links() }}
             </div>
         @endif

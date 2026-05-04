@@ -28,6 +28,28 @@ class Question extends Model
         'sort_order' => 'integer',
     ];
 
+    // Public type constants (friendly names for external code)
+    public const TYPE_TRUE_FALSE = 'boolean';
+    public const TYPE_MCQ_SINGLE = 'single_choice';
+    public const TYPE_MCQ_MULTIPLE = 'multiple_choice';
+    public const TYPE_SHORT_ANSWER = 'text';
+    public const TYPE_LONG_ANSWER = 'text';
+
+    /**
+     * Return a human readable label for the question type
+     */
+    public function typeLabel(): string
+    {
+        return match ($this->type) {
+            self::TYPE_TRUE_FALSE => 'True / False',
+            self::TYPE_MCQ_SINGLE => 'MCQ (Single)',
+            self::TYPE_MCQ_MULTIPLE => 'MCQ (Multiple)',
+            self::TYPE_SHORT_ANSWER => 'Short Answer',
+            self::TYPE_LONG_ANSWER => 'Long Answer',
+            default => ucfirst($this->type),
+        };
+    }
+
     /**
      * Get the quiz this question belongs to
      */

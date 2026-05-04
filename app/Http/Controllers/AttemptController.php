@@ -56,7 +56,7 @@ class AttemptController extends Controller
         // Load questions with options for display
         $quiz->load('questions.options');
 
-        return view('attempts.show', [
+        return view('attempts.show-new', [
             'quiz' => $quiz,
             'attempt' => $attempt,
             'questions' => $quiz->questions,

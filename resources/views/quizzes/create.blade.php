@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="card">
-        <h1 style="margin-bottom: 30px;">Create New Quiz</h1>
+        <h1 style="margin:0 0 1rem;">Create New Quiz</h1>
 
         <form method="POST" action="{{ route('quizzes.store') }}">
             @csrf
@@ -43,16 +43,16 @@
                 </div>
             </div>
 
-            <div style="display: flex; gap: 10px; margin-top: 30px;">
+            <div style="display: flex; gap: .75rem; margin-top: 1rem;">
                 <button type="submit" class="btn">Create Quiz</button>
                 <a href="{{ route('quizzes.manage') }}" class="btn secondary">Cancel</a>
             </div>
         </form>
     </div>
 
-    <div class="card" style="background: #f8f9fa; margin-top: 20px;">
-        <h3 style="margin-bottom: 15px;">💡 Next Steps</h3>
-        <ol style="margin-left: 20px; line-height: 1.8;">
+    <div class="card" style="margin-top: 1rem;">
+        <h3 style="margin:0 0 .75rem;">Next Steps</h3>
+        <ol style="margin:0 0 0 1.1rem; line-height:1.6; color: var(--muted);">
             <li>Fill in the quiz details above</li>
             <li>Click "Create Quiz" to save</li>
             <li>Add questions of different types (True/False, Multiple Choice, etc.)</li>

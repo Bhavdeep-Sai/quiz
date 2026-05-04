@@ -63,8 +63,54 @@ class QuizService
      */
     public function addQuestion(Quiz $quiz, array $data): Question
     {
+        // Validate type-specific requirements
+        $type = $data['type'];
+        $normalizedType = in_array($type, ['short_answer', 'long_answer'], true) ? Question::TYPE_SHORT_ANSWER : $type;
+
+        if (in_array($type, ['short_answer', 'long_answer'], true)) {
+            $data['settings'] = $data['settings'] ?? [];
+            $data['settings']['answer_subtype'] = $type;
+            $data['settings']['grade_mode'] = $type === 'short_answer' ? 'exact' : 'manual';
+            $data['settings']['input_type'] = $type === 'short_answer' ? 'text' : 'textarea';
+        }
+
+        // Enforce objective question rules
+        if (in_array($type, [
+            Question::TYPE_MCQ_SINGLE,
+            Question::TYPE_MCQ_MULTIPLE,
+        ])) {
+            if (empty($data['options']) || !is_array($data['options']) || count($data['options']) < 2) {
+                throw new \InvalidArgumentException('MCQ questions require at least 2 options.');
+            }
+
+            $correctCount = 0;
+            foreach ($data['options'] as $opt) {
+                if (!empty($opt['is_correct'])) {
+                    $correctCount++;
+                }
+            }
+
+            if ($correctCount < 1) {
+                throw new \InvalidArgumentException('At least one correct option must be provided.');
+            }
+
+            if ($type === Question::TYPE_MCQ_SINGLE && $correctCount !== 1) {
+                throw new \InvalidArgumentException('Single choice questions must have exactly one correct option.');
+            }
+        }
+
+        // For boolean type, auto-generate True/False options if options not provided
+        if ($type === Question::TYPE_TRUE_FALSE && (empty($data['options']) || !is_array($data['options']))) {
+            // settings may include correct value as boolean under settings.correct
+            $correctValue = $data['settings']['correct'] ?? null; // true/false
+            $data['options'] = [
+                ['label' => 'True', 'is_correct' => $correctValue === true],
+                ['label' => 'False', 'is_correct' => $correctValue === false],
+            ];
+        }
+
         $question = $quiz->questions()->create([
-            'type' => $data['type'],
+            'type' => $normalizedType,
             'question_text' => $data['question_text'],
             'image_url' => $data['image_url'] ?? null,
             'video_url' => $data['video_url'] ?? null,
@@ -94,6 +140,42 @@ class QuizService
      */
     public function updateQuestion(Question $question, array $data): Question
     {
+        $type = $data['type'] ?? $question->type;
+
+        if (isset($data['settings']['answer_subtype']) && in_array($data['settings']['answer_subtype'], ['short_answer', 'long_answer'], true)) {
+            $data['settings']['grade_mode'] = $data['settings']['answer_subtype'] === 'short_answer' ? 'exact' : 'manual';
+            $data['settings']['input_type'] = $data['settings']['answer_subtype'] === 'short_answer' ? 'text' : 'textarea';
+        }
+
+        if (in_array($type, ['short_answer', 'long_answer'], true)) {
+            $data['settings'] = $data['settings'] ?? [];
+            $data['settings']['answer_subtype'] = $type;
+            $data['settings']['grade_mode'] = $type === 'short_answer' ? 'exact' : 'manual';
+            $data['settings']['input_type'] = $type === 'short_answer' ? 'text' : 'textarea';
+        }
+
+        // If updating to a choice type, validate options rules
+        if (isset($data['options']) && is_array($data['options']) && in_array($type, [Question::TYPE_MCQ_SINGLE, Question::TYPE_MCQ_MULTIPLE])) {
+            if (count($data['options']) < 2) {
+                throw new \InvalidArgumentException('MCQ questions require at least 2 options.');
+            }
+
+            $correctCount = 0;
+            foreach ($data['options'] as $opt) {
+                if (!empty($opt['is_correct'])) {
+                    $correctCount++;
+                }
+            }
+
+            if ($correctCount < 1) {
+                throw new \InvalidArgumentException('At least one correct option must be provided.');
+            }
+
+            if ($type === Question::TYPE_MCQ_SINGLE && $correctCount !== 1) {
+                throw new \InvalidArgumentException('Single choice questions must have exactly one correct option.');
+            }
+        }
+
         $question->update([
             'question_text' => $data['question_text'] ?? $question->question_text,
             'image_url' => $data['image_url'] ?? $question->image_url,
@@ -207,18 +289,37 @@ class QuizService
      */
     public function getAvailableQuestionTypes(): array
     {
-        $types = \App\QuestionTypes\QuestionTypeResolver::getAvailableTypes();
-        $formatted = [];
-
-        foreach ($types as $key => $data) {
-            $formatted[] = [
-                'value' => $key,
-                'label' => $data['name'],
-                'description' => $data['description'],
-                'icon' => $data['icon'] ?? null,
-            ];
-        }
-
-        return $formatted;
+        return [
+            [
+                'value' => 'boolean',
+                'label' => 'True / False',
+                'description' => 'Select true or false and mark the correct one',
+                'icon' => '📋',
+            ],
+            [
+                'value' => 'single_choice',
+                'label' => 'MCQ (Single)',
+                'description' => 'One correct option among many',
+                'icon' => '⭕',
+            ],
+            [
+                'value' => 'multiple_choice',
+                'label' => 'MCQ (Multiple)',
+                'description' => 'One or more correct options',
+                'icon' => '✓',
+            ],
+            [
+                'value' => 'short_answer',
+                'label' => 'Single Line Answer',
+                'description' => 'Enter the expected short answer when creating the question',
+                'icon' => '✎',
+            ],
+            [
+                'value' => 'long_answer',
+                'label' => 'Long Answer',
+                'description' => 'Enter a model answer or rubric for manual grading',
+                'icon' => '📝',
+            ],
+        ];
     }
 }

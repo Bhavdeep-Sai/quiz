@@ -4,7 +4,9 @@
 
 @section('content')
     <div class="card">
-        <h1 style="margin-bottom: 30px;">{{ isset($quiz) ? 'Edit Quiz' : 'Create New Quiz' }}</h1>
+        <div class="card-header">
+            <h1 class="card-title">{{ isset($quiz) ? 'Edit Quiz' : 'Create New Quiz' }}</h1>
+        </div>
 
         <form method="POST" action="{{ isset($quiz) ? route('quizzes.update', $quiz) : route('quizzes.store') }}">
             @csrf
@@ -78,11 +80,11 @@
                                 <td>{{ $question->options_count ?? 0 }}</td>
                                 <td>{{ $question->marks }}</td>
                                 <td style="text-align: center;">
-                                    <a href="#edit-question-{{ $question->id }}" class="btn" style="padding: 4px 8px; font-size: 11px; margin-right: 5px;">Edit</a>
+                                    <a href="#edit-question-{{ $question->id }}" class="btn btn-small" style="margin-right: .35rem;">Edit</a>
                                     <form method="POST" action="{{ route('questions.destroy', [$quiz, $question]) }}" style="display: inline;" onsubmit="return confirm('Delete this question?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn danger" style="padding: 4px 8px; font-size: 11px;">Delete</button>
+                                        <button type="submit" class="btn btn-danger btn-small">Delete</button>
                                     </form>
                                 </td>
                             </tr>
@@ -91,33 +93,21 @@
                 </table>
             @endif
 
-            <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #ddd;">
-                <h3 style="margin-bottom: 20px;">Add New Question</h3>
-                
-                <form method="POST" action="{{ route('questions.store', $quiz) }}">
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line);">
+                <h3 style="margin:0 0 1rem;">Add New Question</h3>
+
+                <form method="POST" action="{{ route('questions.store', $quiz) }}" id="question-builder-form">
                     @csrf
+                    @include('admin.questions.form')
 
-                    <div class="form-group">
-                        <label for="type">Question Type *</label>
-                        <select id="type" name="type" required onchange="updateQuestionForm()">
-                            <option value="">Select Type</option>
-                            <option value="boolean">Boolean (True/False)</option>
-                            <option value="single_choice">Single Choice</option>
-                            <option value="multiple_choice">Multiple Choice</option>
-                            <option value="number">Number Input</option>
-                            <option value="text">Text Input</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="question_text">Question Text *</label>
-                        <textarea id="question_text" name="question_text" required></textarea>
-                    </div>
-
-                    <div class="form-row">
+                    <div class="form-row" style="margin-top: 1rem;">
                         <div class="form-group">
                             <label for="image_url">Image URL</label>
                             <input type="url" id="image_url" name="image_url">
+                        </div>
+                        <div class="form-group">
+                            <label for="video_url">Video URL</label>
+                            <input type="url" id="video_url" name="video_url">
                         </div>
                         <div class="form-group">
                             <label for="marks">Marks *</label>
@@ -133,12 +123,5 @@
 @endsection
 
 @section('scripts')
-    <script>
-        function updateQuestionForm() {
-            const type = document.getElementById('type').value;
-            console.log('Question type selected:', type);
-            // This would be enhanced with JavaScript to show/hide fields
-            // based on the selected question type
-        }
-    </script>
+    <script src="{{ asset('js/admin-question-builder.js') }}"></script>
 @endsection

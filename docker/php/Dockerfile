@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libxml2-dev \
+    postgresql-client \
+    libpq-dev \
     default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
@@ -24,6 +26,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
     pdo \
     pdo_mysql \
+    pdo_pgsql \
     bcmath \
     ctype \
     fileinfo \
@@ -41,6 +44,9 @@ RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /var/www
 
 # Switch to app user
 USER appuser
+
+# Allow git operations in /var/www
+RUN git config --global --add safe.directory /var/www
 
 # Expose port 9000
 EXPOSE 9000

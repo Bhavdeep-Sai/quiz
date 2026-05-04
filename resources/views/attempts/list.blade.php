@@ -4,10 +4,10 @@
 
 @section('content')
     <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; flex-wrap:wrap;">
             <div>
                 <h1>{{ $quiz->title }} - Attempts</h1>
-                <p style="color: #666; margin-top: 5px;">{{ $attempts->total() }} total attempts</p>
+                <p style="color: var(--muted); margin-top: .35rem;">{{ $attempts->total() }} total attempts</p>
             </div>
             <a href="{{ route('quizzes.show', $quiz) }}" class="btn secondary">← Back to Quiz</a>
         </div>
@@ -73,12 +73,11 @@
                 </tbody>
             </table>
 
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 1rem;">
                 {{ $attempts->links() }}
             </div>
 
-            <!-- Summary Stats -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 30px; padding-top: 30px; border-top: 1px solid #ddd;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .75rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line);">
                 @php
                     $passed = $attempts->getCollection()->where('is_passed', true)->count();
                     $failed = $attempts->total() - $passed;
@@ -86,24 +85,24 @@
                     $avgPercentage = $attempts->getCollection()->avg(function($a) { return $a->getPercentage(); });
                 @endphp
 
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+                <div class="stat-box" style="text-align:center;">
                     <div style="font-size: 24px; font-weight: bold; color: #28a745;">{{ $passed }}</div>
-                    <div style="color: #666; margin-top: 5px;">Passed</div>
+                    <div style="color: var(--muted); margin-top: .25rem;">Passed</div>
                 </div>
 
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+                <div class="stat-box" style="text-align:center;">
                     <div style="font-size: 24px; font-weight: bold; color: #dc3545;">{{ $failed }}</div>
-                    <div style="color: #666; margin-top: 5px;">Failed</div>
+                    <div style="color: var(--muted); margin-top: .25rem;">Failed</div>
                 </div>
 
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+                <div class="stat-box" style="text-align:center;">
                     <div style="font-size: 24px; font-weight: bold; color: #667eea;">{{ round($avgScore, 1) }}</div>
-                    <div style="color: #666; margin-top: 5px;">Avg Score</div>
+                    <div style="color: var(--muted); margin-top: .25rem;">Avg Score</div>
                 </div>
 
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+                <div class="stat-box" style="text-align:center;">
                     <div style="font-size: 24px; font-weight: bold; color: #667eea;">{{ round($avgPercentage, 1) }}%</div>
-                    <div style="color: #666; margin-top: 5px;">Avg Percentage</div>
+                    <div style="color: var(--muted); margin-top: .25rem;">Avg Percentage</div>
                 </div>
             </div>
         @endif

@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="card">
-        <h1 style="margin-bottom: 30px;">Edit Quiz: {{ $quiz->title }}</h1>
+        <h1 style="margin:0 0 1rem;">Edit Quiz: {{ $quiz->title }}</h1>
 
         <form method="POST" action="{{ route('quizzes.update', $quiz) }}">
             @csrf
@@ -39,7 +39,7 @@
                 </div>
             </div>
 
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: .75rem;">
                 <button type="submit" class="btn">Update Quiz</button>
                 <a href="{{ route('quizzes.manage') }}" class="btn secondary">Cancel</a>
             </div>

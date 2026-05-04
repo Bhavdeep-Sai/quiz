@@ -33,10 +33,12 @@ class TextType extends BaseQuestionType
         }
 
         $userText = $this->normalizeAnswer($userAnswer);
-        $gradeMode = $question->settings['grade_mode'] ?? 'manual'; // 'manual' or 'keyword'
+        $gradeMode = $question->settings['grade_mode'] ?? 'manual'; // 'manual', 'keyword', or 'exact'
 
         if ($gradeMode === 'keyword') {
             return $this->autoGradeByKeyword($question, $userText);
+        } elseif ($gradeMode === 'exact') {
+            return $this->autoGradeExact($question, $userText);
         } else {
             // Manual grading - mark as pending
             return [
@@ -110,6 +112,36 @@ class TextType extends BaseQuestionType
     }
 
     /**
+     * Auto-grade by exact answer match
+     */
+    private function autoGradeExact(Question $question, string $userText): array
+    {
+        $expected = (string) ($question->settings['correct_answer'] ?? $question->settings['model_answer'] ?? '');
+
+        if ($expected === '') {
+            return [
+                'score' => 0,
+                'is_correct' => false,
+                'feedback' => 'No expected answer defined',
+            ];
+        }
+
+        $caseSensitive = (bool) ($question->settings['case_sensitive'] ?? false);
+        $normalizedUser = $caseSensitive ? trim($userText) : mb_strtolower(trim($userText));
+        $normalizedExpected = $caseSensitive ? trim($expected) : mb_strtolower(trim($expected));
+
+        $isCorrect = $normalizedUser === $normalizedExpected;
+
+        return [
+            'score' => $this->calculateScore($question, $isCorrect),
+            'is_correct' => $isCorrect,
+            'feedback' => $isCorrect
+                ? 'Correct answer!'
+                : 'Incorrect. Please review the expected answer.',
+        ];
+    }
+
+    /**
      * Validate text answer format
      */
     public function validate(mixed $userAnswer, Question $question): array
@@ -143,6 +175,7 @@ class TextType extends BaseQuestionType
 
         return array_merge($this->renderCommonData($question), [
             'type' => 'text',
+            'answer_subtype' => $question->settings['answer_subtype'] ?? 'long_answer',
             'input_type' => $inputType,
             'rows' => $rows,
             'placeholder' => $question->settings['placeholder'] ?? 'Enter your answer here',
@@ -150,6 +183,8 @@ class TextType extends BaseQuestionType
             'max_length' => $question->settings['max_length'] ?? 10000,
             'grade_mode' => $question->settings['grade_mode'] ?? 'manual',
             'character_count_display' => $question->settings['character_count_display'] ?? false,
+            'correct_answer' => $question->settings['correct_answer'] ?? null,
+            'model_answer' => $question->settings['model_answer'] ?? null,
         ]);
     }
 }

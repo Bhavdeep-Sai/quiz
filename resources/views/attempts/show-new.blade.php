@@ -123,19 +123,17 @@
             box-shadow: var(--shadow-md);
         }
 
-        .option-group {
-            margin-bottom: 1rem;
-        }
-
         .option-label {
             display: flex;
             align-items: center;
-            padding: 1rem;
+            gap: 0.75rem;
+            padding: 1rem 1.1rem;
             background: var(--bg-tertiary);
             border: 2px solid var(--border-color);
             border-radius: 0.375rem;
             cursor: pointer;
             transition: var(--transition);
+            margin-bottom: 0.85rem;
         }
 
         .option-label:hover {
@@ -144,10 +142,13 @@
         }
 
         .option-label input {
-            margin-right: 0.75rem;
             cursor: pointer;
             width: 20px;
             height: 20px;
+        }
+
+        .option-label-multi {
+            align-items: flex-start;
         }
 
         .option-label input:checked + .option-text {
@@ -157,6 +158,51 @@
 
         .option-text {
             flex: 1;
+        }
+
+        .question-panel {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .question-type-badge {
+            display: inline-flex;
+            width: fit-content;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--accent-primary);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .answer-stack {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .answer-stack input[type="text"],
+        .answer-stack textarea {
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--bg-primary);
+        }
+
+        .question-progress {
+            height: 10px;
+            background: var(--bg-tertiary);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 1.25rem;
+        }
+
+        .question-progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            transition: width 0.3s ease;
         }
 
         .navigation-buttons {
@@ -248,6 +294,9 @@
                 <form method="POST" action="{{ route('attempts.submit', $attempt) }}" id="quizForm">
                     @csrf
                     @method('PUT')
+                    <div class="question-progress" aria-hidden="true">
+                        <div class="question-progress-bar" id="questionProgressBar" style="width: {{ $totalQuestions > 0 ? round(100 / $totalQuestions, 2) : 0 }}%"></div>
+                    </div>
 
                     @foreach($questions as $index => $question)
                         <div class="question-container {{ $index === 0 ? 'active' : '' }}" id="question-{{ $question->id }}">
@@ -261,70 +310,7 @@
                                 </div>
                             </div>
 
-                            <div class="question-text">
-                                {!! $question->question_text !!}
-                            </div>
-
-                            @if($question->image_url)
-                                <img src="{{ $question->image_url }}" alt="Question image" class="question-image">
-                            @endif
-
-                            @if($question->type === 'boolean')
-                                <div style="margin-bottom: 2rem;">
-                                    <div class="option-group">
-                                        <label class="option-label">
-                                            <input type="radio" name="answers[{{ $question->id }}]" value="true" required>
-                                            <span class="option-text">
-                                                <i class="fas fa-check-circle" style="color: var(--success); margin-right: 0.5rem;"></i>
-                                                True
-                                            </span>
-                                        </label>
-                                    </div>
-                                    <div class="option-group">
-                                        <label class="option-label">
-                                            <input type="radio" name="answers[{{ $question->id }}]" value="false" required>
-                                            <span class="option-text">
-                                                <i class="fas fa-times-circle" style="color: var(--danger); margin-right: 0.5rem;"></i>
-                                                False
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                            @elseif($question->type === 'single_choice')
-                                <div style="margin-bottom: 2rem;">
-                                    @foreach($question->options as $option)
-                                        <div class="option-group">
-                                            <label class="option-label">
-                                                <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}" required>
-                                                <span class="option-text">{{ $option->label }}</span>
-                                            </label>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                            @elseif($question->type === 'multiple_choice')
-                                <div style="margin-bottom: 2rem;">
-                                    @foreach($question->options as $option)
-                                        <div class="option-group">
-                                            <label class="option-label">
-                                                <input type="checkbox" name="answers[{{ $question->id }}][]" value="{{ $option->id }}">
-                                                <span class="option-text">{{ $option->label }}</span>
-                                            </label>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                            @elseif($question->type === 'number')
-                                <div style="margin-bottom: 2rem;">
-                                    <input type="number" name="answers[{{ $question->id }}]" placeholder="Enter your numeric answer" required style="padding: 1rem; font-size: 1rem;">
-                                </div>
-
-                            @elseif($question->type === 'text')
-                                <div style="margin-bottom: 2rem;">
-                                    <textarea name="answers[{{ $question->id }}]" placeholder="Enter your answer..." required style="padding: 1rem; font-size: 1rem;"></textarea>
-                                </div>
-                            @endif
+                            @include('attempts.partials.question-input', ['question' => $question])
 
                             <input type="hidden" id="timeSpent" name="time_spent">
 
@@ -363,6 +349,7 @@
                 currentQ = n;
                 
                 document.getElementById('currentQuestion').textContent = n + 1;
+                document.getElementById('questionProgressBar').style.width = ((n + 1) / totalQ * 100) + '%';
                 
                 // Update navigation buttons
                 document.getElementById('prevBtn').style.display = n === 0 ? 'none' : 'block';

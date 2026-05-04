@@ -3,22 +3,21 @@
 @section('title', 'Quiz Results - ' . $quiz->title)
 
 @section('content')
-    <div style="margin-bottom: 3rem;">
-        <!-- Result Header -->
+    <div style="margin-bottom: 1rem;">
         <div class="score-card">
-            <div style="margin-bottom: 2rem;">
+            <div style="margin-bottom: 1rem;">
                 @if($attempt->is_passed)
-                    <i class="fas fa-trophy" style="font-size: 3.5rem; margin-bottom: 1rem; display: block; opacity: 0.9;"></i>
-                    <h1 style="font-size: 2.25rem; margin-bottom: 0.5rem;">Congratulations!</h1>
-                    <p style="font-size: 1.1rem; opacity: 0.95;">You have successfully passed the quiz</p>
+                    <i class="fas fa-trophy" style="font-size: 2.5rem; margin-bottom: .75rem; display: block; opacity: 0.95;"></i>
+                    <h1 style="font-size: 1.8rem; margin-bottom: .35rem; letter-spacing:-0.03em;">Congratulations!</h1>
+                    <p style="font-size: 1rem; opacity: 0.95; margin:0;">You have successfully passed the quiz</p>
                 @else
-                    <i class="fas fa-clipboard-list" style="font-size: 3.5rem; margin-bottom: 1rem; display: block; opacity: 0.9;"></i>
-                    <h1 style="font-size: 2.25rem; margin-bottom: 0.5rem;">Quiz Completed</h1>
-                    <p style="font-size: 1.1rem; opacity: 0.95;">Review your answers below to understand the concepts better</p>
+                    <i class="fas fa-clipboard-list" style="font-size: 2.5rem; margin-bottom: .75rem; display: block; opacity: 0.95;"></i>
+                    <h1 style="font-size: 1.8rem; margin-bottom: .35rem; letter-spacing:-0.03em;">Quiz Completed</h1>
+                    <p style="font-size: 1rem; opacity: 0.95; margin:0;">Review your answers below.</p>
                 @endif
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; text-align: center;">
                 <div>
                     <div class="score-label">Your Score</div>
                     <div class="score-value">{{ $attempt->total_score }}/{{ $attempt->total_marks }}</div>
@@ -70,7 +69,7 @@
 
     <!-- Analytics Section -->
     @if($analytics)
-        <div class="grid grid-2" style="margin-bottom: 2rem;">
+        <div class="grid grid-2" style="margin-bottom: 1rem;">
             <!-- By Question Type -->
             <div class="card">
                 <div class="card-header">
@@ -166,7 +165,7 @@
     @endif
 
     <!-- Answer Review -->
-    <div class="card" style="margin-bottom: 2rem;">
+    <div class="card" style="margin-bottom: 1rem;">
         <div class="card-header">
             <h2 class="card-title">
                 <i class="fas fa-list-check"></i>
@@ -174,11 +173,11 @@
             </h2>
         </div>
 
-        <div style="margin-top: 2rem;">
+        <div style="margin-top: 1rem;">
             @foreach($answers as $index => $answer)
-                <div style="background: linear-gradient(135deg, {{ $answer->is_correct ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)' }}, transparent); border-left: 4px solid {{ $answer->is_correct ? 'var(--success)' : 'var(--danger)' }}; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 0.75rem;">
+                <div style="background: linear-gradient(135deg, {{ $answer->is_correct ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)' }}, transparent); border-left: 4px solid {{ $answer->is_correct ? 'var(--success)' : 'var(--danger)' }}; padding: 1rem; margin-bottom: .85rem; border-radius: 16px;">
                     
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; gap:1rem; margin-bottom: .75rem;">
                         <div>
                             <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">
                                 <span style="color: var(--text-secondary); font-weight: 500;">Question {{ $index + 1 }}</span>
@@ -229,7 +228,7 @@
     </div>
 
     <!-- Actions -->
-    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+    <div style="display: flex; gap: .75rem; justify-content: center; margin-top: 1rem; flex-wrap:wrap;">
         <a href="/quizzes" class="btn btn-primary">
             <i class="fas fa-book"></i>
             Take Another Quiz

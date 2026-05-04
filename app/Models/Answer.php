@@ -11,6 +11,9 @@ class Answer extends Model
         'attempt_id',
         'question_id',
         'user_answer',
+        // compatibility fields
+        'answer_text',
+        'selected_options',
         'question_type',
         'score',
         'is_correct',
@@ -61,5 +64,37 @@ class Answer extends Model
         }
 
         return (string) $this->user_answer;
+    }
+
+    /**
+     * Get single textual answer representation for APIs
+     */
+    public function getAnswerTextAttribute(): ?string
+    {
+        if (is_null($this->user_answer)) {
+            return null;
+        }
+
+        if (is_array($this->user_answer)) {
+            return implode(', ', $this->user_answer);
+        }
+
+        return (string) $this->user_answer;
+    }
+
+    /**
+     * Return selected option ids when user_answer stores option ids
+     */
+    public function getSelectedOptionsAttribute(): array
+    {
+        if (is_null($this->user_answer)) {
+            return [];
+        }
+
+        if (is_array($this->user_answer)) {
+            return $this->user_answer;
+        }
+
+        return [$this->user_answer];
     }
 }

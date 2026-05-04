@@ -3,16 +3,12 @@
 @section('title', 'Dashboard - QuizMaster')
 
 @section('content')
-    <div style="margin-bottom: 3rem;">
-        <h1 style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--text-primary);">
-            <i class="fas fa-chart-line" style="color: var(--accent-primary); margin-right: 0.75rem;"></i>
-            Dashboard
-        </h1>
-        <p style="color: var(--text-secondary);">Overview of your quiz system</p>
+    <div style="margin-bottom: 1rem;">
+        <h1 style="font-size: 1.65rem; margin: 0 0 .35rem; letter-spacing:-0.03em;"><i class="fas fa-chart-line" style="color: var(--brand-2); margin-right: .55rem;"></i>Dashboard</h1>
+        <p style="color: var(--muted); margin: 0;">A compact overview of your quiz activity.</p>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="grid grid-4" style="margin-bottom: 3rem;">
+    <div class="grid grid-4" style="margin-bottom: 1rem;">
         <div class="stat-box">
             <div class="stat-label">
                 <i class="fas fa-book stat-icon"></i>
@@ -56,8 +52,7 @@
             <a href="/quizzes" class="btn btn-primary btn-small">
                 <i class="fas fa-arrow-right"></i>
                 View All
-            </a>
-        </div>
+    <div class="card" style="margin-bottom: 1rem;">
 
         @if(count($quizzes) > 0)
             <div class="grid grid-3">
@@ -105,7 +100,6 @@
         @endif
     </div>
 
-    <!-- Quick Actions -->
     <div class="card">
         <div class="card-header">
             <h2 class="card-title">
@@ -115,22 +109,22 @@
         </div>
 
         <div class="grid grid-3">
-            <a href="/quizzes" class="quiz-item" style="text-decoration: none; color: inherit; text-align: center;">
-                <i class="fas fa-book" style="font-size: 2rem; color: var(--accent-primary); margin-bottom: 1rem; display: block;"></i>
-                <div class="quiz-item-title" style="justify-content: center;">Browse Quizzes</div>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">Explore and take available quizzes</p>
+            <a href="/quizzes" class="quiz-item" style="text-align: center;">
+                <i class="fas fa-book" style="font-size:1.55rem; color: var(--brand-2); margin-bottom: .75rem; display:block;"></i>
+                <div class="quiz-item-title" style="justify-content:center;">Browse Quizzes</div>
+                <p style="color: var(--muted); font-size: .9rem; margin:0;">Explore and take available quizzes.</p>
             </a>
 
-            <a href="/admin/quizzes" class="quiz-item" style="text-decoration: none; color: inherit; text-align: center;">
-                <i class="fas fa-plus-circle" style="font-size: 2rem; color: var(--success); margin-bottom: 1rem; display: block;"></i>
-                <div class="quiz-item-title" style="justify-content: center;">Create Quiz</div>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">Design new quiz and add questions</p>
+            <a href="/admin/quizzes" class="quiz-item" style="text-align: center;">
+                <i class="fas fa-plus-circle" style="font-size:1.55rem; color: var(--success); margin-bottom: .75rem; display:block;"></i>
+                <div class="quiz-item-title" style="justify-content:center;">Create Quiz</div>
+                <p style="color: var(--muted); font-size: .9rem; margin:0;">Build a new quiz and add questions.</p>
             </a>
 
-            <a href="/admin/quizzes" class="quiz-item" style="text-decoration: none; color: inherit; text-align: center;">
-                <i class="fas fa-chart-bar" style="font-size: 2rem; color: var(--info); margin-bottom: 1rem; display: block;"></i>
-                <div class="quiz-item-title" style="justify-content: center;">Analytics</div>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">View quiz performance and statistics</p>
+            <a href="/admin/quizzes" class="quiz-item" style="text-align: center;">
+                <i class="fas fa-chart-bar" style="font-size:1.55rem; color: var(--info); margin-bottom: .75rem; display:block;"></i>
+                <div class="quiz-item-title" style="justify-content:center;">Analytics</div>
+                <p style="color: var(--muted); font-size: .9rem; margin:0;">View quiz performance and statistics.</p>
             </a>
         </div>
     </div>

@@ -3,14 +3,14 @@
 @section('title', 'Start Quiz - ' . $quiz->title)
 
 @section('content')
-    <div style="margin-bottom: 2rem;">
-        <a href="/quizzes" style="color: var(--accent-primary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+    <div style="margin-bottom: 1rem;">
+        <a href="/quizzes" style="color: var(--brand-2); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: .75rem; font-weight: 700;">
             <i class="fas fa-arrow-left"></i>
             Back to Quizzes
         </a>
     </div>
 
-    <div class="card" style="margin-bottom: 2rem;">
+    <div class="card" style="margin-bottom: 1rem;">
         <div class="card-header">
             <h1 class="card-title" style="font-size: 2rem;">
                 <i class="fas fa-scroll"></i>
@@ -23,7 +23,7 @@
         </p>
 
         <!-- Quiz Details Grid -->
-        <div class="grid grid-4" style="margin-bottom: 2rem;">
+        <div class="grid grid-4" style="margin-bottom: 1rem;">
             <div class="stat-box">
                 <div class="stat-label">
                     <i class="fas fa-question stat-icon"></i>
@@ -94,8 +94,8 @@
                 <input type="text" id="user_identifier" name="user_identifier" placeholder="Enter your student ID (optional)">
             </div>
 
-            <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem;">
-                <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">
+            <div style="background: rgba(8,145,178,.08); padding: 1rem 1.1rem; border-radius: 18px; margin-bottom: 1rem; border:1px solid rgba(8,145,178,.14);">
+                <p style="color: var(--muted); font-size: .92rem; margin: 0;">
                     <i class="fas fa-info-circle" style="color: var(--info); margin-right: 0.5rem;"></i>
                     <strong>Quiz Information:</strong> This quiz contains {{ count($quiz->questions) }} questions with a total of {{ $quiz->questions->sum('marks') }} marks. You must score at least {{ $quiz->pass_percentage }}% to pass.
                 </p>

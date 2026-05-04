@@ -123,8 +123,21 @@ class QuizController extends Controller
      */
     public function storeQuestion(Request $request, Quiz $quiz): RedirectResponse
     {
+        $settings = $request->input('settings', []);
+        if (isset($settings['keywords_input']) && !isset($settings['keywords'])) {
+            $settings['keywords'] = array_values(array_filter(array_map('trim', explode(',', (string) $settings['keywords_input']))));
+        }
+
+        $options = $request->input('options');
+        if (!$options && $request->filled('options_payload')) {
+            $decodedOptions = json_decode($request->input('options_payload'), true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $options = $decodedOptions;
+            }
+        }
+
         $validated = $request->validate([
-            'type' => 'required|in:boolean,single_choice,multiple_choice,number,text',
+            'type' => 'required|in:boolean,single_choice,multiple_choice,short_answer,long_answer,text',
             'question_text' => 'required|string',
             'image_url' => 'nullable|url',
             'video_url' => 'nullable|url',
@@ -135,6 +148,11 @@ class QuizController extends Controller
             'options.*.is_correct' => 'nullable|boolean',
             'options.*.image_url' => 'nullable|url',
         ]);
+
+        $validated['settings'] = $settings;
+        if ($options) {
+            $validated['options'] = $options;
+        }
 
         $question = $this->quizService->addQuestion($quiz, $validated);
 
@@ -148,6 +166,19 @@ class QuizController extends Controller
     {
         abort_unless($question->quiz_id === $quiz->id, 404);
 
+        $settings = $request->input('settings', []);
+        if (isset($settings['keywords_input']) && !isset($settings['keywords'])) {
+            $settings['keywords'] = array_values(array_filter(array_map('trim', explode(',', (string) $settings['keywords_input']))));
+        }
+
+        $options = $request->input('options');
+        if (!$options && $request->filled('options_payload')) {
+            $decodedOptions = json_decode($request->input('options_payload'), true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $options = $decodedOptions;
+            }
+        }
+
         $validated = $request->validate([
             'question_text' => 'required|string',
             'image_url' => 'nullable|url',
@@ -159,6 +190,11 @@ class QuizController extends Controller
             'options.*.is_correct' => 'nullable|boolean',
             'options.*.image_url' => 'nullable|url',
         ]);
+
+        $validated['settings'] = $settings;
+        if ($options) {
+            $validated['options'] = $options;
+        }
 
         $this->quizService->updateQuestion($question, $validated);
 

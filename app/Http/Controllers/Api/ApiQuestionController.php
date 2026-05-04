@@ -110,8 +110,21 @@ class ApiQuestionController extends Controller
     public function store(Request $request, Quiz $quiz): JsonResponse
     {
         try {
+            $settings = $request->input('settings', []);
+            if (isset($settings['keywords_input']) && !isset($settings['keywords'])) {
+                $settings['keywords'] = array_values(array_filter(array_map('trim', explode(',', (string) $settings['keywords_input']))));
+            }
+
+            $options = $request->input('options');
+            if (!$options && $request->filled('options_payload')) {
+                $decodedOptions = json_decode($request->input('options_payload'), true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $options = $decodedOptions;
+                }
+            }
+
             $validated = $request->validate([
-                'type' => 'required|in:boolean,single_choice,multiple_choice,number,text',
+                'type' => 'required|in:boolean,single_choice,multiple_choice,short_answer,long_answer,text',
                 'question_text' => 'required|string',
                 'image_url' => 'nullable|url',
                 'video_url' => 'nullable|url',
@@ -122,6 +135,15 @@ class ApiQuestionController extends Controller
                 'options.*.is_correct' => 'nullable|boolean',
                 'options.*.image_url' => 'nullable|url',
             ]);
+
+            $validated['settings'] = $settings;
+            if ($options) {
+                $validated['options'] = $options;
+            }
+
+            if (in_array($validated['type'], ['short_answer', 'long_answer'], true)) {
+                $validated['settings']['answer_subtype'] = $validated['type'];
+            }
 
             $validated['quiz_id'] = $quiz->id;
             $question = $this->quizService->addQuestion($quiz, $validated);
@@ -143,6 +165,12 @@ class ApiQuestionController extends Controller
                 'success' => false,
                 'error' => 'Validation failed',
                 'errors' => $e->errors(),
+            ], 422);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Invalid data',
+                'message' => $e->getMessage(),
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
@@ -169,6 +197,19 @@ class ApiQuestionController extends Controller
                 ], 404);
             }
 
+            $settings = $request->input('settings', []);
+            if (isset($settings['keywords_input']) && !isset($settings['keywords'])) {
+                $settings['keywords'] = array_values(array_filter(array_map('trim', explode(',', (string) $settings['keywords_input']))));
+            }
+
+            $options = $request->input('options');
+            if (!$options && $request->filled('options_payload')) {
+                $decodedOptions = json_decode($request->input('options_payload'), true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $options = $decodedOptions;
+                }
+            }
+
             $validated = $request->validate([
                 'question_text' => 'required|string',
                 'image_url' => 'nullable|url',
@@ -180,6 +221,15 @@ class ApiQuestionController extends Controller
                 'options.*.is_correct' => 'nullable|boolean',
                 'options.*.image_url' => 'nullable|url',
             ]);
+
+            $validated['settings'] = $settings;
+            if ($options) {
+                $validated['options'] = $options;
+            }
+
+            if (isset($validated['settings']['answer_subtype']) && in_array($validated['settings']['answer_subtype'], ['short_answer', 'long_answer'], true)) {
+                $validated['type'] = $validated['settings']['answer_subtype'];
+            }
 
             $this->quizService->updateQuestion($question, $validated);
             $question->load('options');
@@ -200,6 +250,12 @@ class ApiQuestionController extends Controller
                 'success' => false,
                 'error' => 'Validation failed',
                 'errors' => $e->errors(),
+            ], 422);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Invalid data',
+                'message' => $e->getMessage(),
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
