@@ -8,7 +8,7 @@ This guide covers local, staging, and production deployment for the Dynamic Quiz
 
 - Docker Engine 24+
 - Docker Compose v2+
-- Ports `8000` (app) and `3306` (mysql) available
+- Ports `8000` (app) and `5432` (postgres) available
 
 ## 2. Environment Configuration
 
@@ -24,9 +24,9 @@ Required values in `.env`:
 - `APP_ENV`
 - `APP_DEBUG`
 - `APP_URL`
-- `DB_CONNECTION=mysql`
-- `DB_HOST=mysql`
-- `DB_PORT=3306`
+- `DB_CONNECTION=pgsql`
+- `DB_HOST=postgres`
+- `DB_PORT=5432`
 - `DB_DATABASE`
 - `DB_USERNAME`
 - `DB_PASSWORD`
@@ -99,7 +99,7 @@ docker-compose exec -T php php artisan view:cache
 docker-compose ps
 docker-compose logs -f nginx
 docker-compose logs -f php
-docker-compose logs -f mysql
+docker-compose logs -f postgres
 ```
 
 ## 6. Zero-Downtime Update Sequence
@@ -126,20 +126,20 @@ curl http://localhost:8000/api/health
 ## 7.1 Backup
 
 ```bash
-docker-compose exec -T mysql mysqldump -u root -p${DB_ROOT_PASSWORD:-root} ${DB_DATABASE:-quiz} > backup.sql
+docker-compose exec -T postgres pg_dump -U ${DB_USERNAME:-quiz_user} -d ${DB_DATABASE:-quiz} > backup.sql
 ```
 
 ## 7.2 Restore
 
 ```bash
-docker-compose exec -T mysql mysql -u root -p${DB_ROOT_PASSWORD:-root} ${DB_DATABASE:-quiz} < backup.sql
+docker-compose exec -T postgres psql -U ${DB_USERNAME:-quiz_user} -d ${DB_DATABASE:-quiz} < backup.sql
 ```
 
 ## 8. Security Checklist
 
 - Set `APP_DEBUG=false` in production.
 - Use non-default DB passwords.
-- Restrict MySQL port exposure if external access is unnecessary.
+- Restrict PostgreSQL port exposure if external access is unnecessary.
 - Add TLS termination in front of Nginx (reverse proxy/load balancer).
 - Rotate secrets regularly.
 

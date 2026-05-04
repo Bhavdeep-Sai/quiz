@@ -21,7 +21,7 @@ docker-compose logs -f
 
 Fixes:
 
-- Ensure ports `8000` and `3306` are free.
+- Ensure ports `8000` and `5432` are free.
 - Rebuild containers:
 
 ```bash
@@ -29,21 +29,26 @@ docker-compose down
 docker-compose up -d --build
 ```
 
-## 3. MySQL Connection Refused
+## 3. PostgreSQL Connection Refused
 
 Check:
 
 ```bash
-docker-compose logs -f mysql
+docker-compose logs -f postgres
 ```
 
 Fixes:
 
-- Wait until MySQL healthcheck is healthy.
+- Wait until PostgreSQL healthcheck is healthy.
 - Confirm `.env` values:
-  - `DB_HOST=mysql`
-  - `DB_PORT=3306`
+  - `DB_HOST=postgres`
+  - `DB_PORT=5432`
   - DB credentials match compose env.
+- Test connection manually:
+
+```bash
+docker-compose exec -T postgres psql -U quiz_user -d quiz -c "SELECT 1;"
+```
 
 ## 4. Migration Fails
 
