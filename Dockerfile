@@ -19,6 +19,5 @@ COPY --from=vendor /app /var/www/html
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
 
-ENV PHP_FPM_CHILDREN=5
 EXPOSE 10000
-CMD ["php-fpm"]
+CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]

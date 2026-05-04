@@ -4,9 +4,6 @@ set -e
 echo "=== Installing Composer Dependencies ==="
 composer install --no-dev --prefer-dist --no-interaction
 
-echo "=== Generating APP Key ==="
-php artisan key:generate --force
-
 echo "=== Running Database Migrations ==="
 php artisan migrate --force
 
